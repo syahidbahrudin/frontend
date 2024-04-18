@@ -71,7 +71,6 @@ export default function EditProfile() {
         setprofileAbout(res.data.profileAbout);
       setPhoneNumber(res.data.userPhoneNumber);
       setuserStudID(res.data.userStudID);
-      console.log(userName);
     });
   }, []);
 
@@ -104,18 +103,25 @@ export default function EditProfile() {
     } else {
       setuserCourse(selectedCourse);
       setuserCollege(colleged.name);
-      const formData = new FormData();
-      formData.append("profilePicture", profilePicture);
-      formData.append("userCollege", userCollege);
-      formData.append("userCourse", userCourse);
-      formData.append("userPhoneNumber", userPhoneNumber);
-      formData.append("userStudID", userStudID);
-      formData.append("profileAbout", profileAbout);
-      formData.append("userName", userName);
-      await axios.put(`http://localhost:2000/api/users/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      router.replace(`/myprofile/${id}`);
+      const userData = {
+        profilePicture: profilePicture,
+        userCollege: userCollege,
+        userCourse: userCourse,
+        userPhoneNumber: userPhoneNumber,
+        userStudID: userStudID,
+        profileAbout: profileAbout,
+        userName: userName
+      };
+
+      try {
+        await axios.put(`http://localhost:2000/api/users/${id}`, userData, {
+          headers: { "Content-Type": "application/json" }
+        });
+        router.replace(`/myprofile/${id}`);
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+        // Handle error appropriately
+      }
     }
   };
 
@@ -147,51 +153,13 @@ export default function EditProfile() {
     <div className=" pb-11">
       <Headeruser />
       <div className="bg-gradient-to-r from-red-200 via-gray-300 to-cyan-100 pt-[3%] pb-[7%] px-4 ">
-        <h1 className="text-center font-semibold text-4xl mb-6">
+        <h1 className="text-center font-semibold text-2xl xl:text-4xl mb-6">
           Edit your profile
         </h1>
       </div>
-      <div className="mt-[-6%]">
+      <div className="mt-[-6%] px-3">
         <form onSubmit={submit}>
-          <div className="max-w-[40rem] mx-auto ">
-            <div className="flex flex-row items-center rounded-xl border border-gray-200 p-10 bg-white w-full ">
-              <div className="w-32 h-32 border-4 border-white rounded-full overflow-hidden ">
-                <img
-                  className="object-cover object-center h-32 w-full "
-                  src={
-                    profilePicture
-                      ? profilePicture instanceof File
-                        ? URL.createObjectURL(profilePicture)
-                        : `http://localhost:2000/uploads/${profilePicture}`
-                      : "https://static.vecteezy.com/system/resources/previews/020/765/399/non_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
-                  }
-                  alt="Profile"
-                />
-              </div>
-              <div className="space-y-1 ml-6">
-                <h1 className="text-xl text-[#64748B]">Profile Photo</h1>
-                <p className="text-sm text-[#94A3B8]">Recommended 300x300</p>
-                <div className="space-x-3">
-                  <button
-                    onClick={fileRemoved}
-                    className="border px-3 py-2 rounded-md text-gray-400"
-                  >
-                    Remove
-                  </button>
-                  <label className="border px-3 py-2 rounded-md text-gray-400 cursor-pointer">
-                    Change
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(e)}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-10 max-w-xl mx-auto">
+          <div className="mt-10 max-w-xl mx-auto bg-white p-5 rounded-xl">
             <div className=" flex justify-center items-center flex-col">
               <div className=" w-full gap-6 flex flex-col">
                 <div className="flex flex-col gap-2">

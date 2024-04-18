@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect, Fragment, useState } from "react";
 import Image from "next/image";
 import logo from "../public/assets/logo.svg";
 import { Toaster, toast } from "react-hot-toast";
-import { useEffect, Fragment, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { Listbox, Transition } from "@headlessui/react";
@@ -50,6 +49,7 @@ const allCourses = {
     "Bachelor of Information Technology (Graphics & Multimedia) (Hons)"
   ]
 };
+
 export default function SignUp() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [courseOptions, setCourseOptions] = useState([]);
@@ -84,22 +84,29 @@ export default function SignUp() {
     }
   }, [colleged]);
 
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
   const onSignup = async (event) => {
     event.preventDefault();
     try {
       setLoading(true);
       setSelectedCollege(colleged);
+
+      // Validate form fields
       if (
-        !userName &&
-        !userEmail &&
-        !userPass &&
-        !userStudID &&
-        !colleged &&
-        !selectedCourse &&
-        selectedCourse === "Select Course" &&
-        !userPhoneNumber
+        !userName ||
+        !validateEmail(userEmail) ||
+        !userStudID ||
+        !colleged ||
+        !selectedCourse ||
+        selectedCourse === "Select Course" ||
+        !userPhoneNumber ||
+        !userPass
       ) {
-        toast.error("Please fill in all the required fields.");
+        toast.error("Please fill in all the required fields correctly.");
       } else {
         const user = {
           userName,
@@ -117,12 +124,12 @@ export default function SignUp() {
         );
 
         router.push("/");
-        toast.success("Register Success");
+        toast.success("Registration Successful");
         console.log("Signup success", response.data);
       }
     } catch (error) {
       console.log("Signup failed", error);
-      toast.error(error.message || "Signup failed");
+      toast.error("User already exists");
     } finally {
       setLoading(false);
     }
@@ -157,6 +164,7 @@ export default function SignUp() {
                 className="outline-none border rounded-md px-3 py-2 text-lg"
                 placeholder="Enter user name"
                 id="userNamee"
+                value={userName}
                 onChange={(e) => setUserName(e.target.value)}
               />
             </div>
@@ -167,6 +175,7 @@ export default function SignUp() {
                 className="outline-none border rounded-md px-3 py-2 text-lg"
                 placeholder="Enter email address"
                 id="userEmail"
+                value={userEmail}
                 onChange={(e) => setUserEmail(e.target.value)}
               />
             </div>
@@ -177,6 +186,7 @@ export default function SignUp() {
                 className="outline-none border rounded-md px-3 py-2 text-lg"
                 placeholder="Enter student ID"
                 id="userStudID"
+                value={userStudID}
                 onChange={(e) => setUserStudID(e.target.value)}
               />
             </div>
@@ -322,6 +332,7 @@ export default function SignUp() {
                 className="outline-none border rounded-md px-3 py-2 text-lg"
                 placeholder="Enter phone number"
                 id="userPhoneNumber"
+                value={userPhoneNumber}
                 onChange={(e) => setUserPhoneNumber(e.target.value)}
               />
             </div>
@@ -332,6 +343,7 @@ export default function SignUp() {
                 className="outline-none border rounded-md px-3 py-2 text-lg"
                 placeholder="Enter password"
                 id="userPass"
+                value={userPass}
                 onChange={(e) => setUserPass(e.target.value)}
               />
             </div>

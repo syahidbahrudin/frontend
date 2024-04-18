@@ -15,6 +15,7 @@ export default function Document() {
       <body className="pt-[70px]">
         <Main />
         <NextScript />
+        <script src="./node_modules/preline/dist/preline.js"></script>
       </body>
     </Html>
   );

@@ -20,6 +20,11 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (userStudID == "admin" && userPass == "admin123") {
+        router.push(`/admin/`);
+        toast.success("Welcome Admin");
+      }
+
       if (!userStudID && !userPass) {
         toast.error("Please fill the form");
       } else {
@@ -27,30 +32,20 @@ export default function SignIn() {
           userStudID,
           userPass
         });
-        router.push("/home");
+        router.push(`/home`);
         setUser(res.data);
         setUserData(res.data);
       }
     } catch (err) {
       console.error("Login error:", err);
 
-      // Check if the error is a response error (from the server)
       if (err.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Response data:", err.response.data);
-        console.error("Response status:", err.response.status);
-        console.error("Response headers:", err.response.headers);
-
-        // You can extract specific error messages from the response data and handle them
         if (err.response.data && err.response.data.error) {
           toast.error(err.response.data.error);
         }
       } else if (err.request) {
-        // The request was made but no response was received
         console.error("No response received:", err.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error("Error during request setup:", err.message);
       }
     }
@@ -66,7 +61,7 @@ export default function SignIn() {
         if (userdata.exp * 1000 < new Date().getTime()) {
           refreshToken();
         } else {
-          router.push("/home");
+          router.push(`/home`);
         }
       } catch (error) {
         console.error("Error decoding token:", error);
@@ -81,8 +76,8 @@ export default function SignIn() {
           <Image
             src={logo}
             alt="logo"
-            height={150}
-            width={150}
+            height={300}
+            width={300}
             className="w-auto h-auto"
           />
           <div>
@@ -96,11 +91,11 @@ export default function SignIn() {
           <div className=" w-full flex flex-col gap-3">
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="text-start flex flex-col gap-2">
-                <label className="text-[#64748B] text-sm">Student email</label>
+                <label className="text-[#64748B] text-sm">Student ID</label>
                 <input
                   type="text"
                   className="outline-none border rounded-md px-3 py-2 text-lg"
-                  placeholder="Enter student email"
+                  placeholder="Enter your ID"
                   onChange={(e) => setuserStudID(e.target.value)}
                 />
               </div>
@@ -123,11 +118,7 @@ export default function SignIn() {
                 </button>
               </div>
             </form>
-            <Link
-              href={"/"}
-              className="text-end text-[#64748B]"
-              onClick={() => sendOTP()}
-            >
+            <Link href={"/resetpassword"} className="text-start text-[#64748B]">
               Forgot Password?
             </Link>
           </div>

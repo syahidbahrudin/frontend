@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import love from "@/public/icon/love.svg";
 import { axiosInstance } from "@/lib/axios";
-import Product from "@/components/Product";
 import { useRouter } from "next/router";
-import write from "@/public/icon/write.svg";
-import read from "@/public/icon/read.svg";
 import Headeruser from "@/components/Headeruser";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { RxDotFilled } from "react-icons/rx";
+import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function ProductDetail() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,20 +17,6 @@ export default function ProductDetail() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    const formattedDate = `${seconds} seconds ago`;
-
-    return formattedDate;
-  };
   const fetchProduct = async () => {
     setIsLoading(true);
     try {
@@ -52,6 +36,31 @@ export default function ProductDetail() {
     } finally {
       setIsLoading(false);
     }
+  };
+  const handleDelete = async () => {
+    try {
+      const deleting = axios.delete(`http://localhost:2000/api/products/${id}`);
+      console.log("Delete Success");
+      toast.success("Delete Success");
+      router.push(`/myprofile/${user._id}`);
+    } catch (error) {
+      toast.error("Failed to delete");
+      console.error(error);
+    }
+  };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    const formattedDate = `${seconds} seconds ago`;
+
+    return formattedDate;
   };
 
   const prevSlide = () => {
@@ -81,7 +90,7 @@ export default function ProductDetail() {
     return (
       <>
         <Headeruser />
-        <div className=" mt-3 flex flex-col lg:flex-row  py-5 px-10 lg:space-x-10">
+        <div className="mt-3 flex py-5 px-10 space-x-10">
           <div className="flex flex-1">
             <div className="w-full">
               <div className="w-full aspect-[5/4] mx-auto  group relative">
@@ -132,10 +141,26 @@ export default function ProductDetail() {
           <div className="flex flex-1">
             <div className="flex flex-1">
               <div className="flex flex-col w-full">
-                <div className="flex flex-grow flex-1 flex-col gap-5 pt-3 lg:pt-0">
+                <div className="flex flex-grow flex-1 flex-col gap-5">
                   <div className="flex flex-row">
                     <div className="flex justify-start flex-1 text-[#64748B] items-center">
                       {products.productCat}
+                    </div>
+                    <div className="flex justify-end gap-4 flex-1 items-start">
+                      <button
+                        onClick={handleDelete}
+                        className="flex items-center gap-1 px-4 py-1 border rounded-lg bg-red-500 text-white"
+                      >
+                        <TrashIcon height={15} width={15} />
+                        Delete
+                      </button>
+                      <a
+                        href={`/editproduct/${products._id}`}
+                        className="flex items-center gap-1 px-4 py-1 border rounded-lg"
+                      >
+                        <PencilIcon height={15} width={15} />
+                        Edit
+                      </a>
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
@@ -164,7 +189,7 @@ export default function ProductDetail() {
                     </div>
                     <div>
                       <h1 className="font-semibold">Meet-up Location</h1>
-                      <p>Masjid Uniten</p>
+                      <p>{products.meetup}</p>
                     </div>
                   </div>
                   <div className="max-w-[90%]">
@@ -172,19 +197,19 @@ export default function ProductDetail() {
                     <p>{products.productDesc}</p>
                   </div>
                 </div>
-                <div className="flex flex-row gap-3 w-full pt-2">
+                <div className="flex flex-row gap-3 w-full">
                   <div className="flex flex-1">
                     <a
                       href={`tel:${user.userPhoneNumber}`}
-                      className="bg-[#E11D48] text-white  p-4 text-center w-full rounded-lg text-base lg:text-xl font-medium"
+                      className="bg-[#E11D48] text-white  p-4 text-center w-full rounded-lg text-xl font-medium"
                     >
                       Call Seller
                     </a>
                   </div>
                   <div className="flex flex-1">
                     <a
-                      href={`https://wa.me/+6${user.userPhoneNumber}`}
-                      className="bg-[#22D3EE] text-white  p-4 text-center w-full rounded-lg text-base lg:text-xl font-medium"
+                      href={`https://wa.me/${user.PhoneNumber}`}
+                      className="bg-[#22D3EE] text-white  p-4 text-center w-full rounded-lg text-xl font-medium"
                     >
                       Chat with Seller
                     </a>
@@ -200,7 +225,7 @@ export default function ProductDetail() {
 
   return (
     <div>
-      <div className="">{renderProduct()}</div>
+      <div>{renderProduct()}</div>
     </div>
   );
 }

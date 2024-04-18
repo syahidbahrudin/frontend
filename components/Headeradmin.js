@@ -26,13 +26,15 @@ export default function Headeradmin() {
         <div className="fixed  inset-x-0 top-0  px-[30px] bg-white border-b">
           <div className="flex  py-5 items-center">
             <div className="text-black flex justify-start flex-1">
-              <Image
-                src={logo}
-                alt="logo"
-                width={150}
-                height={150}
-                className="w-auto h-auto"
-              />
+              <a href="/admin">
+                <Image
+                  src={logo}
+                  alt="logo"
+                  width={150}
+                  height={150}
+                  className="w-auto h-auto"
+                />
+              </a>
             </div>
             <div className="flex justify-center flex-1">
               <nav>
@@ -55,7 +57,7 @@ export default function Headeradmin() {
                 <Link href="admin/profile" className="font-semibold">
                   Hi admin
                 </Link>
-                <Link href="admin/profile" className="font-semibold">
+                <Link href="/" className="font-semibold">
                   <Image src={logout} height={30} alt="logout" width={30} />
                 </Link>
               </div>
